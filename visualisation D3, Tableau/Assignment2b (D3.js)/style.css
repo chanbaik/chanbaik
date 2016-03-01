@@ -1,0 +1,59 @@
+Stylesheet Visualisation Assignment 2b
+Seungchan Baik 
+CID00636363
+
+body {background: linear-gradient(to bottom, white, grey);}
+
+
+h1 {
+  text-align: center;
+  font-family: Helvetica;
+  color:#99CCFF;
+}				
+
+h1 span {color:#FF9999;}
+
+h2 {
+  text-align: center;
+  font-family: Helvetica;
+  color:#FFCC66;
+  font-size: 200%;
+  line-height: 0px;
+}	
+h2 span {color:#66CC66;}		
+
+h3 {
+  color:#808080;
+  font-family: Helvetica;
+  text-align: center;
+  line-height: 15px;}	
+
+.intro {
+  text-align: left;
+  font-size: 12px;
+  font-family: Helvetica;
+  color:#808080 ;
+}
+
+.countrylist {
+  text-align: center;
+  font-size: 14px;
+  font-family: Helvetica;
+  color:Black ;
+}
+
+.desc {
+  text-align: left;
+  fot-size: 10px;
+  font-family: Helvetica;
+  color:#808080;
+}
+
+div {
+  vertical-align: center;
+  horizontal-align: center;
+}
+
+
+body {background: linear-gradient(to bottom, white, #E0E0E0);
+}

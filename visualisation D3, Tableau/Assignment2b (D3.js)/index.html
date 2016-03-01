@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>BS1807 Assignment 2b</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!--header-->
+  <h1>OLYMPICS <span> GENDER </span></h1>
+  <h2>TOP 10 PERFORMING <span>COUNTRIES</span></h2>
+  <!--countrylist-->
+  <p class="countrylist"> Australia, Canada, France, Germany, Great Britain, Hungary, Italy, Netherlands, Russia and United States of America</p>
+
+  <!--introduction-->
+  <p class="intro"> This editorial is an extension of the Tableau dashboard created for Visualisation Assignment 2a. In this editorial, I will evaluate the performance of the top 10 performing countries described in the Tableau dashboard over time, and also reproduce/develop visualisations depicted in the dashboard in relation to the aspect of gender of the medallists. </p>
+
+  <!--introduction-->
+  <p class="intro"> Given that MedalsData1 ranges from 1896 to 2012, and women gained an increasing level of rights and power over this time period I expected to observe an overall increase in the number of events for women and the participation rate of female athletes in the Olympic Games. Furthermore, I wanted to evaluate the performance of top 10 countires using total counts of medallists and category of medals.<p class="intro"> .</p>
+ 
+  <!--visualsiation title-->
+  <h3>1. Event vs Medallist of Top 10 Countries </h3>
+  
+  <!--visualisation graph-->
+<div id="eventvsmedallist", style="width:800px; margin:0 auto;">
+  <script src="libs/d3/3.5.14/d3.js"></script>
+  <script src="libs/dimple/dist/dimple.v2.1.6.js"></script>
+  <script type="text/javascript">
+  <!--sizing svg, loading and filtering data-->
+    var svg = dimple.newSvg("#eventvsmedallist", 800, 380);
+     d3.tsv("./data/MedalsData.txt", function(data){
+        data = dimple.filterData(data, "CountryName", [
+          "United States of America", "Germany", "Great Britain",
+          "Russia", "Australia", "Hungary", "Canada", "France",
+          "Italy", "Netherlands"]);
+  <!--charting, setting bound, setting axis, creating legend-->
+        var myChart = new dimple.chart(svg,data);
+        myChart.setBounds(60, 10, 520, 330)
+        var x = myChart.addMeasureAxis("x", "Medallist");
+        x.addOrderRule("CountryName");
+        myChart.addMeasureAxis("y", "Event");
+        myChart.addSeries(["Medal", "CountryName"], dimple.plot.bubble);
+        var myLegend = myChart.addLegend(730, 100, 60, 300, "Right");
+        myChart.draw();
+        myChart.legends = [];
+
+  <!--legend title-->
+        svg.selectAll("title_text")
+          .data(["Top 10", "Countires","show/hide by", "click:"])
+          .enter()
+          .append("text")
+            .attr("x", 645)
+            .attr("y", function (d, i) { return 65 + i * 14; })
+            .style("font-family", "Helvetica")
+            .style("font-size", "10px")
+            .style("color", "Black")
+            .text(function (d) { return d; });
+
+  <!--setting filters so that clicking an rect will filter the countries-->
+        var filterValues = dimple.getUniqueValues(data, "CountryName");
+        myLegend.shapes.selectAll("rect")
+          .on("click", function (e) {
+            var hide = false;
+            var newFilters = [];
+            filterValues.forEach(function (f) {
+              if (f === e.aggField.slice(-1)[0]) {
+                hide = true;
+              } else {
+                newFilters.push(f);
+              }
+            });
+            if (hide) {
+              d3.select(this).style("opacity", 0.2);
+            } else {
+              newFilters.push(e.aggField.slice(-1)[0]);
+              d3.select(this).style("opacity", 0.8);
+            }
+            filterValues = newFilters;
+            myChart.data = dimple.filterData(data, "CountryName", filterValues);
+            myChart.draw(800);
+          });
+      });
+  </script>
+</div>
+<p class="intro">*This visualisation illustrates the performance of top 10 countries listed in the legend. Individual performance of those countries are depicted with circles representing each country. Each country consists of 3 circles representing gold, silver and bronze medals, and the circles are plotted at the intersection of the total number of medallists (gold, silver and bronze) and the total number of events that the medallists participated to win medals.</p>
+
+<p class="intro">*The visualisation has a built-in interaction in which you can select the countries apprearing in the scatterplot. Show and hide the countries by clicking on the rectangles next to the country names!</p>
+ 
+  <!--visualsiation title-->
+  <h3>2. Distinct Events by Gender (1896-2012) </h3>
+  
+  <!--visualisation graph-->
+<div id="eventpergender", style="width:800px; margin:0 auto;">
+  <script src="libs/d3/3.5.14/d3.js"></script>
+  <script src="libs/dimple/dist/dimple.v2.1.6.js"></script>
+  <script type="text/javascript">
+ <!--sizing svg, loading data-->
+    var svg = dimple.newSvg("#eventpergender", 800, 370);
+    d3.tsv("./data/MedalsData.txt", function(data){
+ <!--charting, setting bound, setting axis, creating legend-->
+      var myChart = new dimple.chart(svg, data);
+      myChart.setBounds(60, 30, 710, 305);
+      var x = myChart.addCategoryAxis("x", "Games");
+      x.addOrderRule("Games");
+      myChart.addMeasureAxis("y", "Event");
+      myChart.addSeries("Gender", dimple.plot.bar);
+      myChart.addLegend(60, 10, 690, 20, "right");
+      myChart.draw();
+    });
+  </script>
+</div>
+<p class="intro">*This visualisation shows the total number of events per Olympic Game Year by gender across the entire time period from 1896 to 2012. MedalsData1 does not contain the data for group events, and
+therefore, the category of mixed gender events does not exist in this chart.</p>
+<p class="intro">*From the chart, you will be able to observe the change in the total number of events over time, the change in the number of events for male over time, the change in the number of events for female over time and the overall change in the participation of female athletes in Olympic Games.</p>
+
+  <!--visualsiation title-->
+  <h3>3. Total Medallists of Top 10 Countries</h3>
+  
+  <!--visualisation graph-->
+<div id="strongperform1", style="width:800px; margin:0 auto;">
+  <script src="libs/d3/3.5.14/d3.js"></script>
+  <script src="libs/dimple/dist/dimple.v2.1.6.js"></script>
+  <script type="text/javascript">
+ <!--sizing svg, loading and filtering data-->
+    var svg = dimple.newSvg("#strongperform1", 800, 404);
+    d3.tsv("./data/MedalsData.txt", function(data){
+        data = dimple.filterData(data, "CountryName", [
+          "United States of America", "Germany", "Great Britain",
+          "Russia", "Australia", "Hungary", "Canada", "France",
+          "Italy", "Netherlands"]);
+ <!--charting, setting bound, setting axis, creating legend-->
+      var myChart = new dimple.chart(svg, data);
+      myChart.setBounds(60, 30, 710, 305);
+      var x = myChart.addCategoryAxis("x", "CountryName");
+      x.addOrderRule("CountryName");
+      myChart.addMeasureAxis("y", "Medallist");
+      myChart.addSeries("Gender", dimple.plot.bar);
+      myChart.addLegend(60, 10, 690, 20, "right");
+      myChart.draw();
+    });
+  </script>
+</div>
+<p class="intro">*This visualisation shows the total number of medallists of top 10 performing countries across the entire time period from 1896 to 2012.</p>
+ 
+  <!--visualsiation title-->
+  <h3>4. Medallists of Top 10 Countries each Game Year</h3>
+  
+  <!--visualisation graph-->
+<div id="strongperform2", style="width:800px; margin:0 auto;">
+  <script src="libs/d3/3.5.14/d3.js"></script>
+  <script src="libs/dimple/dist/dimple.v2.1.6.js"></script>
+  <script type="text/javascript">
+ <!--sizing svg, loading and filtering data-->
+    var svg = dimple.newSvg("#strongperform2", 800, 404);
+    d3.tsv("./data/MedalsData.txt", function(data){
+        data = dimple.filterData(data, "CountryName", [
+          "United States of America", "Germany", "Great Britain",
+          "Russia", "Australia", "Hungary", "Canada", "France",
+          "Italy", "Netherlands"]);
+ <!--charting, setting bound, setting axis, creating legend-->
+      var myChart = new dimple.chart(svg, data);
+      myChart.setBounds(60, 30, 710, 305);
+      var x = myChart.addCategoryAxis("x", "CountryName");
+      x.addOrderRule("CountryName");
+      myChart.addMeasureAxis("y", "Medallist");
+      myChart.addMeasureAxis("z", "Medallist");
+      myChart.addSeries("Gender", dimple.plot.bar);
+      myChart.addLegend(60, 10, 690, 20, "right");
+      myChart.setStoryboard("Games");
+      myChart.draw();
+    });
+  </script>
+</div>
+<p class="intro">*This visualisation re-encodes the information presented in 3. Total Medallists of Top 10 Countries by each game year.</p> <p class="intro">*It consists of an animation that allows you to examine the information in game year-specific levels.</p>
+
+  <!--visualsiation title-->
+  <h3>5. Total Counts of each Category of Medals of Top 10 Countries</h3>
+  
+  <!--visualisation graph-->
+
+<div id="medal1", style="width:800px; margin:0 auto;">
+  <script src="libs/d3/3.5.14/d3.js"></script>
+  <script src="libs/dimple/dist/dimple.v2.1.6.js"></script>
+  <script type="text/javascript">
+ <!--sizing svg, loading and filtering data-->
+    var svg = dimple.newSvg("#medal1", 800, 498);
+     d3.tsv("./data/MedalsData.txt", function(data){
+        data = dimple.filterData(data, "CountryName", [
+          "United States of America", "Germany", "Great Britain",
+          "Russia", "Australia", "Hungary", "Canada", "France",
+          "Italy", "Netherlands"]);
+ <!--charting, setting bound, setting axis, creating legend-->
+        var myChart = new dimple.chart(svg, data);
+        myChart.setBounds(60, 30, 700, 400)
+        var x = myChart.addCategoryAxis("x", "CountryName");
+        x.addOrderRule("CountryName");
+        myChart.addMeasureAxis("y", "Medallist");
+        myChart.addMeasureAxis("z", "Medallist");
+        myChart.addSeries("Medal", dimple.plot.bubble);
+        myChart.defaultColors = [
+          new dimple.color("#cccc66", 1), // gold
+          new dimple.color("#bdc3c7", 1), // silver
+          new dimple.color("#999900", 1)  // bronze
+      ];
+        myChart.addLegend(140, 10, 560, 20, "right");
+        myChart.draw();
+      });
+  </script>
+</div>
+
+<p class="intro">*This visualisation shows the total number of medals of top 10 performing countries by the category of gold, silver and bronze medals, across the entire time period from 1896 to 2012.</p> <p class="intro">*The magnitudes/sizes of medals are relative to the total number of medals. Eacy country consists of 3 medals/circles (gold, silver and bronze).</p>
+
+  <!--visualsiation title-->
+  <h3>6. Counts of each Category of Medals of Top 10 Countries each Game Year</h3>
+  
+  <!--visualisation graph-->
+
+<div id="medal2", style="width:800px; margin:0 auto;">
+  <script src="libs/d3/3.5.14/d3.js"></script>
+  <script src="libs/dimple/dist/dimple.v2.1.6.js"></script>
+  <script type="text/javascript">
+ <!--sizing svg, loading and filtering data-->
+    var svg = dimple.newSvg("#medal2", 800, 568);
+     d3.tsv("./data/MedalsData.txt", function(data){
+        data = dimple.filterData(data, "CountryName", [
+          "United States of America", "Germany", "Great Britain",
+          "Russia", "Australia", "Hungary", "Canada", "France",
+          "Italy", "Netherlands"]);
+ <!--charting, setting bound, setting axis, creating legend-->
+        var myChart = new dimple.chart(svg, data);
+        myChart.setBounds(60, 100, 700, 400)
+        var x = myChart.addCategoryAxis("x", "CountryName");
+        x.addOrderRule("CountryName");
+        myChart.addMeasureAxis("y", "Medallist");
+        myChart.addMeasureAxis("z", "Medallist");
+        myChart.addSeries("Medal", dimple.plot.bubble);
+        myChart.defaultColors = [
+          new dimple.color("#cccc66", 1), // gold
+          new dimple.color("#bdc3c7", 1), // silver
+          new dimple.color("#999900", 1)  // bronze
+      ];
+        myChart.addLegend(140, 10, 560, 20, "right");
+        myChart.setStoryboard("Games");
+        myChart.draw();
+      });
+  </script>
+</div>
+<p class="intro">*This visualisation re-encodes the information presented in 5. Total Counts of each Category of Medals of Top 10 Counties by each game year.</p> <p class="intro">*It consists of an animation that allows you to examine the information in game year-specific levels.</p>
+
+</body>
+</html>
